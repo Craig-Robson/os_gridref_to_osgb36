@@ -2,8 +2,8 @@ import pandas
 import numpy
 from osgr_to_osgb36_data import corrections
 
-input_file = ''
-output_file = ''
+input_file = '/home/craig/Downloads/kittiwake_colinies_2000.csv'
+output_file = '/home/craig/Downloads/kittiwake_colinies_2000_coords.csv'
 
 data = pandas.read_csv(input_file, low_memory=False)
 
@@ -15,11 +15,18 @@ data['n'] = numpy.nan
 i = 0
 for index, row in data.iterrows():
    
-    if isinstance(row['NG LETTERS'], str):
-            
-        correction_e = corrections[row['NG LETTERS']]['E']
-        correction_n = corrections[row['NG LETTERS']]['N']
+    if isinstance(row['StartGrid'], str):
 
+        print(row['StartGrid'])
+        correction_e = corrections[row['StartGrid'][:2]]['E']
+        correction_n = corrections[row['StartGrid'][:2]]['N']
+
+        row['EASTING'] = row['StartGrid'][2:5]+str('0')
+        row['NORTHING'] = row['StartGrid'][5:9]+str('0')
+        print('------------')
+        print(row['EASTING'])
+        print(row['NORTHING'])
+        print('------------')
         e = str(row['EASTING']).replace('.0','')
         n = str(row['NORTHING']).replace('.0','')
 
@@ -37,7 +44,7 @@ for index, row in data.iterrows():
 
         data.at[index,'e'] = e
         data.at[index,'n'] = n
-        
+
 # write output file
 data.to_csv(output_file)
     
